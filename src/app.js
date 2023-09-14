@@ -11,7 +11,7 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: true, limit: '50MB' }))
 app.use(bodyParser.json({ limit: '50MB' }))
 app.use(cors())
-app.use('/bap', require('@routes'))
+app.use('/', require('@routes'))
 
 app.listen(env.APPLICATION_PORT, (res, err) => {
 	if (err) onError(err)
