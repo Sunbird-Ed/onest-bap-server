@@ -36,8 +36,10 @@ exports.requestBodyGenerator = (api, body, transactionId, messageId) => {
 		requestBody.context.action = 'search'
 		requestBody.message = {
 			intent: {
-				descriptor: {
-					name: body.keyword,
+				item: {
+					descriptor: {
+						name: body.keyword,
+					}
 				}
 				// item: { descriptor: { name: body.keyword } },
 			},
