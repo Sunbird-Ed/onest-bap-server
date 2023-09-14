@@ -20,7 +20,7 @@ exports.search = async (req, res) => {
 
 			if (!data) res.status(403).send({ message: 'No search  data Found' })
 			else res.status(200).send({ data: data })
-		}, 3000)
+		}, 15000)
 	} catch (err) {
 		console.log('err',err)
 		res.status(400).send({ status: false })
