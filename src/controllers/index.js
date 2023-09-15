@@ -45,7 +45,13 @@ exports.onSearch = async (req, res) => {
 			await cacheSave(`${transactionId}:ON_SEARCH`, [req.body])
 			await cacheSave('LATEST_ON_SEARCH_RESULT', [req.body])
 		}
-		res.status(200).json({ status: true, message: 'BAP Received Data From BPP' })
+		res.status(200).json({
+			"message": {
+				"ack": {
+					"status": "ACK"
+				}
+			}
+		})
 	} catch (err) {
 		
 	}
@@ -60,7 +66,7 @@ exports.select = async (req, res) => {
 		const itemId = req.body.item_id
 		const fulfillmentId = req.body.fulfillment_id
 		await requester.postRequest(
-			bppUri + '/select',
+			bppUri + 'select',
 			{},
 			requestBodyGenerator('bpp_select', { itemId, fulfillmentId, bppUri, bppId }, transactionId, messageId),
 			{ shouldSign: true }
