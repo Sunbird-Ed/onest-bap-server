@@ -51,16 +51,10 @@ exports.requestBodyGenerator = (api, body, transactionId, messageId) => {
 		requestBody.context.bpp_id = body.bppId
 		requestBody.message = {
 			order: {
-				items: [{ id: body.itemId }],
-				fulfillments: [{ id: body.fulfillmentId }],
-				billing: {
-					name: faker.name.fullName(),
-					phone: faker.phone.phoneNumber(),
-					email: faker.internet.email(),
-					time: {
-						timezone: 'IST',
-					},
+				provider: {
+					id: body.providerId
 				},
+				items: [{ id: body.itemId }]
 			},
 		}
 	}
@@ -68,16 +62,48 @@ exports.requestBodyGenerator = (api, body, transactionId, messageId) => {
 		requestBody.context.action = 'init'
 		requestBody.message = {
 			order: {
-				id: uuidv4(),
+				provider: {
+					id: body.providerId
+				},
 				items: [{ id: body.itemId }],
-				fulfillments: [{ id: body.fulfillmentId }],
+				fulfillments: [{
+					customer: {
+						person: {
+							name: faker.name.fullName(),
+							phone: faker.phone.phoneNumber(),
+							email: faker.internet.email(),
+						}
+					}
+				}],
 				billing: {
 					name: faker.name.fullName(),
 					phone: faker.phone.phoneNumber(),
-					email: faker.internet.email(),
-					time: {
-						timezone: 'IST',
-					},
+					email: faker.internet.email()
+				},
+			},
+		}
+	}
+	else if (api === 'bpp_confirm') {
+		requestBody.context.action = 'confirm'
+		requestBody.message = {
+			order: {
+				provider: {
+					id: body.providerId
+				},
+				items: [{ id: body.itemId }],
+				fulfillments: [{
+					customer: {
+						person: {
+							name: faker.name.fullName(),
+							phone: faker.phone.phoneNumber(),
+							email: faker.internet.email(),
+						}
+					}
+				}],
+				billing: {
+					name: faker.name.fullName(),
+					phone: faker.phone.phoneNumber(),
+					email: faker.internet.email()
 				},
 			},
 		}
