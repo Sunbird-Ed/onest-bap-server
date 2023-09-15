@@ -17,7 +17,7 @@ exports.cacheGet = async (key) => {
 }
 
 exports.cacheSave = async (key, data) => {
-	await client.setEx(key, 60 * 60 * 24, JSON.stringify(data))
+	await client.setEx(key, 60 * 60 * 2, JSON.stringify(data))
 }
 
 exports.getKeys = async (pattern) => {
