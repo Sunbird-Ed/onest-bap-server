@@ -129,6 +129,7 @@ exports.init = async (req, res) => {
 }
 
 exports.onInit = async (req, res) => {
+	console.log(`onInit: `, req.body)
 	try {
 		const transactionId = req.body.context.transaction_id
 		await cacheSave(`${transactionId}:ON_INIT`, req.body)
@@ -171,6 +172,7 @@ exports.confirm = async (req, res) => {
 }
 
 exports.onConfirm = async (req, res) => {
+	console.log(`onConfirm: `, req.body)
 	try {
 		const transactionId = req.body.context.transaction_id
 		const messageId = req.body.context.message_id
