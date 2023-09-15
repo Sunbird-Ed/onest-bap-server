@@ -9,7 +9,7 @@ router.post('/init', bap.init)
 router.post('/confirm', bap.confirm)
 router.post('/cancel', bap.cancel)
 router.post('/status', bap.status)
-router.get('/sign_header', bap.signHeader)
+router.post('/sign_header', bap.signHeader)
 
 router.post('/user-enrollment-status', bap.userEnrollmentStatus)
 router.get('/enrolled-sessions', bap.enrolledSessions)

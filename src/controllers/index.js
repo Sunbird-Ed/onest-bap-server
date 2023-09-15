@@ -290,9 +290,8 @@ exports.enrolledSessions = async (req, res) => {
 }
 
 exports.signHeader =  async (req, res) => { 
-	const message = req.query.message;
-
-	const header = await createAuthorizationHeaderForBPP(message)
+	const message = req.body;
+	const header = await createAuthorizationHeaderForBPP(JSON.stringify(message))
 
 	res.status(200).send({header})
 }
