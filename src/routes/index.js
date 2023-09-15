@@ -14,7 +14,7 @@ router.post('/sign_header', bap.signHeader)
 router.post('/user-enrollment-status', bap.userEnrollmentStatus)
 router.get('/enrolled-sessions', bap.enrolledSessions)
 
-// router.use(authVerifier)
+router.use(authVerifier)
 router.post('/on_search', bap.onSearch)
 router.post('/on_select', bap.onSelect)
 router.post('/on_init', bap.onInit)
