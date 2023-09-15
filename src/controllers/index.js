@@ -69,8 +69,9 @@ exports.select = async (req, res) => {
 		const itemId = req.body.item_id
 		const providerId = req.body.provider_id
 		const requestBody = requestBodyGenerator('bpp_select', { itemId, providerId, bppUri, bppId }, transactionId, messageId)
+		const endPoint  = bppUri.endsWith("/") ? bppUri : bppUri + "/"
 		const rs = await requester.postRequest(
-			bppUri + 'select',
+			endPoint + 'select',
 			{},
 			requestBody,
 			{ shouldSign: true }
@@ -112,8 +113,9 @@ exports.init = async (req, res) => {
 		const bppUri = req.body.bpp_uri
 		const itemId = req.body.item_id
 		const providerId = req.body.provider_id
+		const endPoint  = bppUri.endsWith("/") ? bppUri : bppUri + "/"
 		await requester.postRequest(
-			bppUri + 'init',
+			endPoint + 'init',
 			{},
 			requestBodyGenerator('bpp_init', { itemId, providerId }, transactionId, messageId),
 			{ shouldSign: true }
@@ -155,8 +157,9 @@ exports.confirm = async (req, res) => {
 		const bppUri = req.body.bpp_uri
 		const itemId = req.body.item_id
 		const providerId = req.body.provider_id
+		const endPoint  = bppUri.endsWith("/") ? bppUri : bppUri + "/"
 		await requester.postRequest(
-			bppUri + 'confirm',
+			endPoint + 'confirm',
 			{},
 			requestBodyGenerator('bpp_confirm', { itemId, providerId }, transactionId, messageId),
 			{ shouldSign: true }
