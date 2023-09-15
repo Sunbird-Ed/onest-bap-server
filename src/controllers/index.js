@@ -156,7 +156,7 @@ exports.confirm = async (req, res) => {
 		await requester.postRequest(
 			bppUri + 'confirm',
 			{},
-			requestBodyGenerator('bpp_init', { itemId, providerId }, transactionId, messageId),
+			requestBodyGenerator('bpp_confirm', { itemId, providerId }, transactionId, messageId),
 			{ shouldSign: true }
 		)
 		const message = await getMessage(`${transactionId}:ON_CONFIRM:MESSAGE`)
