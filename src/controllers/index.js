@@ -11,6 +11,9 @@ exports.search = async (req, res) => {
 	try {
 		const transactionId = uuidv4()
 		const messageId = uuidv4()
+		console.log("search")
+		console.log({transactionId})
+
 		const requestBody = requestBodyGenerator('bg_search', { keyword: req.query.keyword }, transactionId, messageId)
 		const rs = await requester.postRequest(
 			env.BECKN_BG_URI + '/search',
@@ -22,7 +25,6 @@ exports.search = async (req, res) => {
 		send(requestBody.context, requestBody.message, rs.data)
 		setTimeout(async () => {
 			const data = await cacheGet(`${transactionId}:ON_SEARCH`)
-
 			if (!data) res.status(403).send({ message: 'No search  data Found' })
 			else res.status(200).send({ data: data })
 		}, 25000)
