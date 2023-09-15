@@ -32,7 +32,7 @@ exports.search = async (req, res) => {
 }
 
 exports.onSearch = async (req, res) => {
-	console.log(req)
+	console.log(`onSearch: `, req.body.context)
 	try {
 		const transactionId = req.body.context.transaction_id
 		const messageId = req.body.context.message_id
@@ -65,12 +65,14 @@ exports.select = async (req, res) => {
 		const bppId = req.body.bpp_id
 		const itemId = req.body.item_id
 		const providerId = req.body.provider_id
-		await requester.postRequest(
+		const requestBody = requestBodyGenerator('bpp_select', { itemId, providerId, bppUri, bppId }, transactionId, messageId)
+		const rs = await requester.postRequest(
 			bppUri + 'select',
 			{},
-			requestBodyGenerator('bpp_select', { itemId, providerId, bppUri, bppId }, transactionId, messageId),
+			requestBody,
 			{ shouldSign: true }
 		)
+		send(requestBody.context, requestBody.message, rs.data)
 		const message = await getMessage(`${transactionId}:ON_SELECT:MESSAGE`)
 		if (message !== transactionId)
 			return res.status(400).json({ message: 'Something Went Wrong (Redis Message Issue)' })
@@ -88,7 +90,13 @@ exports.onSelect = async (req, res) => {
 		const transactionId = req.body.context.transaction_id
 		await cacheSave(`${transactionId}:ON_SELECT`, req.body)
 		await sendMessage(`${transactionId}:ON_SELECT:MESSAGE`, transactionId)
-		res.status(200).json({ status: true, message: 'BAP Received INIT From BPP' })
+		res.status(200).json({
+			"message": {
+				"ack": {
+					"status": "ACK"
+				}
+			}
+		})
 	} catch (err) {
 		console.log(err)
 	}
@@ -125,7 +133,13 @@ exports.onInit = async (req, res) => {
 		const messageId = req.body.context.message_id
 		await cacheSave(`${transactionId}:${messageId}:ON_INIT`, req.body)
 		await sendMessage(`${transactionId}:${messageId}`, transactionId + messageId)
-		res.status(200).json({ status: true, message: 'BAP Received INIT From BPP' })
+		res.status(200).json({
+			"message": {
+				"ack": {
+					"status": "ACK"
+				}
+			}
+		})
 	} catch (err) {
 		console.log(err)
 	}
@@ -183,7 +197,13 @@ exports.onConfirm = async (req, res) => {
 		const messageId = req.body.context.message_id
 		await cacheSave(`${transactionId}:${messageId}:ON_CONFIRM`, req.body)
 		await sendMessage(`${transactionId}:${messageId}`, transactionId + messageId)
-		res.status(200).json({ status: true, message: 'BAP Received CONFIRM From BPP' })
+		res.status(200).json({
+			"message": {
+				"ack": {
+					"status": "ACK"
+				}
+			}
+		})
 	} catch (err) {}
 }
 
