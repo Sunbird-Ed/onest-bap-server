@@ -18,6 +18,7 @@ exports.search = async (req, res) => {
 			requestBody,
 			{ shouldSign: true }
 		)
+		console.log(`search: `, rs.data)
 		send(requestBody.context, requestBody.message, rs.data)
 		setTimeout(async () => {
 			const data = await cacheGet(`${transactionId}:ON_SEARCH`)
