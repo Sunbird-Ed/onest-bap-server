@@ -5,7 +5,7 @@ let envVariables = {
 	NODE_ENV: process.env.NODE_ENV || 'development',
 	APPLICATION_PORT: process.env.APPLICATION_PORT || 3004,
 	SUBSCRIBER: process.env.SUBSCRIBER || '',
-	BECKN_BG_URI: 'https://ps-bap-client.becknprotocol.io',
+	BECKN_BG_URI: 'https://gateway.becknprotocol.io/bg',
 	BECKN_REGISTRY_URI: 'https://registry.becknprotocol.io/subscribers',
 	AUTH_ENABLED: 'false',
 	PRIVATE_KEY: process.env.PRIVATE_KEY || 'iYtpLqvdccG37VhiR/+3DTLt8QDBeiHc2wryWQN6703SO4wv9pOhHElluuTTBSt5SFS26uuMEWIIENdBmVN5dw==',

@@ -106,8 +106,8 @@ exports.init = async (req, res) => {
 	try {
 		const transactionId = req.body.transaction_id
 		const messageId = uuidv4()
-		const bppUri = req.body.bppUri
-		const itemId = req.body.itemId
+		const bppUri = req.body.bpp_uri
+		const itemId = req.body.item_id
 		const providerId = req.body.providerId
 		await requester.postRequest(
 			bppUri + '/init',
