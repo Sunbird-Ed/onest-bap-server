@@ -32,7 +32,7 @@ exports.search = async (req, res) => {
 }
 
 exports.onSearch = async (req, res) => {
-
+	console.log(req)
 	try {
 		const transactionId = req.body.context.transaction_id
 		const messageId = req.body.context.message_id
@@ -64,11 +64,11 @@ exports.select = async (req, res) => {
 		const bppUri = req.body.bpp_uri
 		const bppId = req.body.bpp_id
 		const itemId = req.body.item_id
-		const fulfillmentId = req.body.fulfillment_id
+		const providerId = req.body.provider_id
 		await requester.postRequest(
 			bppUri + 'select',
 			{},
-			requestBodyGenerator('bpp_select', { itemId, fulfillmentId, bppUri, bppId }, transactionId, messageId),
+			requestBodyGenerator('bpp_select', { itemId, providerId, bppUri, bppId }, transactionId, messageId),
 			{ shouldSign: true }
 		)
 		const message = await getMessage(`${transactionId}:ON_SELECT:MESSAGE`)
@@ -100,11 +100,11 @@ exports.init = async (req, res) => {
 		const messageId = uuidv4()
 		const bppUri = req.body.bppUri
 		const itemId = req.body.itemId
-		const fulfillmentId = req.body.fulfillmentId
+		const providerId = req.body.providerId
 		await requester.postRequest(
 			bppUri + '/init',
 			{},
-			requestBodyGenerator('bpp_init', { itemId, fulfillmentId }, transactionId, messageId),
+			requestBodyGenerator('bpp_init', { itemId, providerId }, transactionId, messageId),
 			{ shouldSign: true }
 		)
 		const message = await getMessage(`${transactionId}:${messageId}`)

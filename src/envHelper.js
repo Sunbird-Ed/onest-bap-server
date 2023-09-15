@@ -7,7 +7,7 @@ let envVariables = {
 	SUBSCRIBER: process.env.SUBSCRIBER || '',
 	BECKN_BG_URI: 'https://ps-bap-client.becknprotocol.io',
 	BECKN_REGISTRY_URI: 'https://registry.becknprotocol.io/subscribers',
-	AUTH_ENABLED: 'true',
+	AUTH_ENABLED: 'false',
 	PRIVATE_KEY: process.env.PRIVATE_KEY || 'iYtpLqvdccG37VhiR/+3DTLt8QDBeiHc2wryWQN6703SO4wv9pOhHElluuTTBSt5SFS26uuMEWIIENdBmVN5dw==',
 	SUBSCRIBER_ID: process.env.SUBSCRIBER_ID || 'sunbird-ed-bap',
 	UNIQUE_ID: process.env.UNIQUE_ID || 'sunbird-ed-bap',
