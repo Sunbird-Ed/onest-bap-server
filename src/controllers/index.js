@@ -109,17 +109,17 @@ exports.init = async (req, res) => {
 		const messageId = uuidv4()
 		const bppUri = req.body.bpp_uri
 		const itemId = req.body.item_id
-		const providerId = req.body.providerId
+		const providerId = req.body.provider_id
 		await requester.postRequest(
-			bppUri + '/init',
+			bppUri + 'init',
 			{},
 			requestBodyGenerator('bpp_init', { itemId, providerId }, transactionId, messageId),
 			{ shouldSign: true }
 		)
-		const message = await getMessage(`${transactionId}:${messageId}`)
-		if (message !== transactionId + messageId)
+		const message = await getMessage(`${transactionId}:ON_INIT:MESSAGE`)
+		if (message !== transactionId)
 			return res.status(400).json({ message: 'Something Went Wrong (Redis Message Issue)' })
-		const data = await cacheGet(`${transactionId}:${messageId}:ON_INIT`)
+		const data = await cacheGet(`${transactionId}:ON_INIT`)
 		if (!data) return res.status(403).send({ message: 'No data Found' })
 		else return res.status(200).send({ data: data })
 	} catch (err) {
@@ -131,9 +131,8 @@ exports.init = async (req, res) => {
 exports.onInit = async (req, res) => {
 	try {
 		const transactionId = req.body.context.transaction_id
-		const messageId = req.body.context.message_id
-		await cacheSave(`${transactionId}:${messageId}:ON_INIT`, req.body)
-		await sendMessage(`${transactionId}:${messageId}`, transactionId + messageId)
+		await cacheSave(`${transactionId}:ON_INIT`, req.body)
+		await sendMessage(`${transactionId}:ON_INIT:MESSAGE`, transactionId)
 		res.status(200).json({
 			"message": {
 				"ack": {
@@ -150,42 +149,21 @@ exports.confirm = async (req, res) => {
 	try {
 		const transactionId = req.body.transaction_id
 		const messageId = uuidv4()
-		const bppUri = req.body.bppUri
-		const itemId = req.body.itemId
-		const fulfillmentId = req.body.fulfillmentId
+		const bppUri = req.body.bpp_uri
+		const itemId = req.body.item_id
+		const providerId = req.body.provider_id
 		await requester.postRequest(
-			bppUri + '/confirm',
+			bppUri + 'confirm',
 			{},
-			requestBodyGenerator('bpp_init', { itemId, fulfillmentId }, transactionId, messageId),
+			requestBodyGenerator('bpp_init', { itemId, providerId }, transactionId, messageId),
 			{ shouldSign: true }
 		)
-		const message = await getMessage(`${transactionId}:${messageId}`)
+		const message = await getMessage(`${transactionId}:ON_CONFIRM:MESSAGE`)
 		if (message !== transactionId + messageId)
 			return res.status(400).json({ message: 'Something Went Wrong (Redis Message Issue)' })
-		const data = await cacheGet(`${transactionId}:${messageId}:ON_CONFIRM`)
+		const data = await cacheGet(`${transactionId}:ON_CONFIRM`)
 		if (!data) return res.status(403).send({ message: 'No data Found' })
 		res.status(200).send({ data: data })
-		const latestOnSearchResult = await cacheGet('LATEST_ON_SEARCH_RESULT')
-		let session
-		if (!latestOnSearchResult) return res.status(400).send({ status: false, reason: 'No Latest On Search Result' })
-		for (let i = 0; i < latestOnSearchResult.length; i++) {
-			const currentBppResponse = latestOnSearchResult[i]
-			if (currentBppResponse.context.bpp_uri === bppUri) {
-				const category = currentBppResponse.message.catalog['bpp/categories'][itemId - 1]
-				const item = currentBppResponse.message.catalog['bpp/providers'][itemId - 1]
-				const fulfillment = currentBppResponse.message.catalog['fulfillments'][itemId - 1]
-				const bpp = currentBppResponse.message.catalog['bpp/descriptor']
-				const provider = currentBppResponse.message.catalog['bpp/providers'][itemId - 1]
-				session = {
-					category,
-					item,
-					fulfillment,
-					bpp,
-					provider,
-				}
-			}
-		}
-		await cacheSave(`${bppUri}:${itemId}:ENROLLED`, session)
 	} catch (err) {
 		console.log(err)
 		res.status(400).send({ status: false })
@@ -196,8 +174,8 @@ exports.onConfirm = async (req, res) => {
 	try {
 		const transactionId = req.body.context.transaction_id
 		const messageId = req.body.context.message_id
-		await cacheSave(`${transactionId}:${messageId}:ON_CONFIRM`, req.body)
-		await sendMessage(`${transactionId}:${messageId}`, transactionId + messageId)
+		await cacheSave(`${transactionId}:ON_CONFIRM`, req.body)
+		await sendMessage(`${transactionId}:ON_CONFIRM:MESSAGE`, transactionId + messageId)
 		res.status(200).json({
 			"message": {
 				"ack": {
