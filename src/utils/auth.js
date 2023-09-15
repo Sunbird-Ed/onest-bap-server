@@ -11,6 +11,13 @@ exports.createAuthorizationHeader = async (message) => {
 	return header
 }
 
+exports.createAuthorizationHeaderForBPP = async (message) => {
+	const { signingString, expires, created } = await createSigningString(JSON.stringify(message))
+	const signature = await signMessage(signingString, '81LatPLoFIooC/CMkfOAX+S+MbIrPOy4Tp85RahaYFz99viE8B9GSb35/69FNlkmgl2oaH0CcBFLr+k9rTtTsQ==')
+	const header = `Signature keyId="sunbird-ed-bpp|sunbird-ed-bpp|ed25519",algorithm="ed25519",created="${created}",expires="${expires}",headers="(created) (expires) digest",signature="${signature}"`
+	return header
+}
+
 const createSigningString = async (message, created, expires) => {
 	if (!created) created = Math.floor(new Date().getTime() / 1000 - 1 * 60).toString()
 	if (!expires) expires = (parseInt(created) + 1 * 60 * 60).toString()

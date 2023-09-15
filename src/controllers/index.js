@@ -5,6 +5,7 @@ const { cacheSave, cacheGet, getKeys, getMessage, sendMessage } = require('@util
 const { v4: uuidv4 } = require('uuid')
 const env = require('../envHelper')
 const { send } = require('../telemetry')
+const { createAuthorizationHeaderForBPP } = require('../utils/auth')
 
 exports.search = async (req, res) => {
 	try {
@@ -54,10 +55,10 @@ exports.select = async (req, res) => {
 	try {
 		const transactionId = req.body.transaction_id
 		const messageId = uuidv4()
-		const bppUri = req.body.bppUri
-		const bppId = req.body.bppId
-		const itemId = req.body.itemId
-		const fulfillmentId = req.body.fulfillmentId
+		const bppUri = req.body.bpp_uri
+		const bppId = req.body.bpp_id
+		const itemId = req.body.item_id
+		const fulfillmentId = req.body.fulfillment_id
 		await requester.postRequest(
 			bppUri + '/select',
 			{},
@@ -286,4 +287,12 @@ exports.enrolledSessions = async (req, res) => {
 		res.status(200).send(collector)
 	} catch (err) {
 	}
+}
+
+exports.signHeader =  async (req, res) => { 
+	const message = req.query.message;
+
+	const header = await createAuthorizationHeaderForBPP(message)
+
+	res.status(200).send({header})
 }
