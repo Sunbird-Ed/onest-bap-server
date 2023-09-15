@@ -44,7 +44,27 @@ exports.requestBodyGenerator = (api, body, transactionId, messageId) => {
 				// item: { descriptor: { name: body.keyword } },
 			},
 		}
-	} else if (api === 'bpp_init') {
+	}
+	else if (api === 'bpp_select') {
+		requestBody.context.action = 'select'
+		requestBody.context.bpp_url = body.bppUri
+		requestBody.context.bpp_id = body.bppId
+		requestBody.message = {
+			order: {
+				items: [{ id: body.itemId }],
+				fulfillments: [{ id: body.fulfillmentId }],
+				billing: {
+					name: faker.name.fullName(),
+					phone: faker.phone.phoneNumber(),
+					email: faker.internet.email(),
+					time: {
+						timezone: 'IST',
+					},
+				},
+			},
+		}
+	}
+	else if (api === 'bpp_init') {
 		requestBody.context.action = 'init'
 		requestBody.message = {
 			order: {

@@ -4,17 +4,20 @@ const { requestBodyGenerator } = require('@utils/requestBodyGenerator')
 const { cacheSave, cacheGet, getKeys, getMessage, sendMessage } = require('@utils/redis')
 const { v4: uuidv4 } = require('uuid')
 const env = require('../envHelper')
+const { send } = require('../telemetry')
 
 exports.search = async (req, res) => {
 	try {
 		const transactionId = uuidv4()
 		const messageId = uuidv4()
+		const requestBody = requestBodyGenerator('bg_search', { keyword: req.query.keyword }, transactionId, messageId)
 		const rs = await requester.postRequest(
 			env.BECKN_BG_URI + '/search',
 			{},
-			requestBodyGenerator('bg_search', { keyword: req.query.keyword }, transactionId, messageId),
+			requestBody,
 			{ shouldSign: true }
 		)
+		send(requestBody.context, requestBody.message, rs.data)
 		setTimeout(async () => {
 			const data = await cacheGet(`${transactionId}:ON_SEARCH`)
 
@@ -44,6 +47,43 @@ exports.onSearch = async (req, res) => {
 		res.status(200).json({ status: true, message: 'BAP Received Data From BPP' })
 	} catch (err) {
 		
+	}
+}
+
+exports.select = async (req, res) => {
+	try {
+		const transactionId = req.body.transaction_id
+		const messageId = uuidv4()
+		const bppUri = req.body.bppUri
+		const bppId = req.body.bppId
+		const itemId = req.body.itemId
+		const fulfillmentId = req.body.fulfillmentId
+		await requester.postRequest(
+			bppUri + '/select',
+			{},
+			requestBodyGenerator('bpp_select', { itemId, fulfillmentId, bppUri, bppId }, transactionId, messageId),
+			{ shouldSign: true }
+		)
+		const message = await getMessage(`${transactionId}:ON_SELECT:MESSAGE`)
+		if (message !== transactionId)
+			return res.status(400).json({ message: 'Something Went Wrong (Redis Message Issue)' })
+		const data = await cacheGet(`${transactionId}:ON_SELECT`)
+		if (!data) return res.status(403).send({ message: 'No data Found' })
+		else return res.status(200).send({ data: data })
+	} catch (err) {
+		console.log(err)
+		res.status(400).send({ status: false })
+	}
+}
+
+exports.onSelect = async (req, res) => {
+	try {
+		const transactionId = req.body.context.transaction_id
+		await cacheSave(`${transactionId}:ON_SELECT`, req.body)
+		await sendMessage(`${transactionId}:ON_SELECT:MESSAGE`, transactionId)
+		res.status(200).json({ status: true, message: 'BAP Received INIT From BPP' })
+	} catch (err) {
+		console.log(err)
 	}
 }
 
